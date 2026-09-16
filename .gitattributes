@@ -1,0 +1,3 @@
+# LF everywhere: deploy scripts are piped to bash on Linux
+* text=auto eol=lf
+*.woff2 binary
