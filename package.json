@@ -1,0 +1,17 @@
+{
+  "name": "steam-genre-market",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Which Steam genres sold best over the last 12 months, weighted by saturation. Open data, rebuildable.",
+  "scripts": {
+    "fetch:gamalytic": "node scripts/fetch-gamalytic.mjs",
+    "fetch:steam": "node scripts/fetch-steam.mjs",
+    "build": "node scripts/build-data.mjs",
+    "update": "node scripts/fetch-gamalytic.mjs && node scripts/fetch-steam.mjs && node scripts/build-data.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

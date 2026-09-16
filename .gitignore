@@ -1,0 +1,5 @@
+node_modules/
+
+# Fetched and generated data: rebuilt with `npm run update`, not redistributed
+data/raw/
+site/data/
