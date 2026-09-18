@@ -1,8 +1,8 @@
 import { METHOD, makeT } from './i18n.js';
 import { columns, hideTooltip, scatter } from './charts.js';
 import {
-  PRICE_BANDS, aggregatePairs, aggregateTags, byRollingYear, filterGames, gamesWithTag, monthKeyOf, monthly, periodPresets,
-  periodRange, prepare, summary,
+  PRICE_BANDS, aggregatePairs, aggregateTags, byRollingYear, filterGames, gamesWithTag, keptTags, monthKeyOf, monthly,
+  periodPresets, periodRange, prepare, summary,
 } from './stats.js';
 
 const CAPSULE_BASE = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/';
@@ -422,6 +422,15 @@ function card(title, sub, ...children) {
   );
 }
 
+// A tag below the "minimum releases" bar used to disappear with nothing said, which reads as missing data
+function hiddenNote(hidden) {
+  if (!hidden?.minN && !hidden?.ease) return null;
+  const parts = [];
+  if (hidden.minN) parts.push(t('tagsHiddenMinN', { n: hidden.minN, min: st.minN }));
+  if (hidden.ease) parts.push(t('tagsHiddenEase', { n: hidden.ease }));
+  return h('p', { class: 'card-sub', text: parts.join(' ') });
+}
+
 function renderTagsView(main, idx, sum) {
   const rows = aggregateTags(ds, idx, st, sum.rate);
   maxWilson = Math.max(0.0001, ...rows.map((r) => r.wilson));
@@ -441,6 +450,7 @@ function renderTagsView(main, idx, sum) {
     visible.length
       ? table({ columns: cols, rows: visible, selectedKey: selected, onRow: (r) => update({ tag: r.key === st.tag ? null : r.key }) })
       : h('p', { class: 'empty', text: t('noResult') }),
+    hiddenNote(rows.hidden),
   );
 
   main.replaceChildren(kpis(sum), scatterCard, tableCard, detail);
@@ -625,7 +635,7 @@ function renderGamesView(main, idx, sum) {
   lastDrawerTag = null;
   const g = ds.games;
   let list = idx.filter((i) => g.gross[i] >= st.threshold);
-  if (st.pairTag != null) list = list.filter((i) => g.tags[i].slice(0, st.topN).includes(st.pairTag));
+  if (st.pairTag != null) list = list.filter((i) => keptTags(ds, g.tags[i], st).includes(st.pairTag));
   list = list.filter((i) => matches(st.q, g.name[i], g.dev[i]));
   const rows = list.map((i) => ({
     key: i,

@@ -152,27 +152,30 @@ function bump(ds, map, key, ids, i, threshold) {
 
 const keepRow = (st) => (r) => r.n >= st.minN && (!st.minEase || r.ease >= st.minEase);
 
+// The N tags a game counts for. Hidden tags are dropped BEFORE the cut, so "10 tags per game"
+// means ten real ones: a game labelled Indie + Singleplayer + Early Access used to spend three of
+// its ten slots on rows nobody can see, and vanished that much from the genre counts.
+export function keptTags(ds, tags, st) {
+  return (st.hideGeneric ? tags.filter((t) => !ds.tags[t].generic) : tags).slice(0, st.topN);
+}
+
 export function aggregateTags(ds, idx, st, baseRate) {
-  const g = ds.games;
   const map = new Map();
   for (const i of idx) {
-    const tags = g.tags[i];
-    for (let k = 0; k < Math.min(st.topN, tags.length); k++) {
-      if (st.hideGeneric && ds.tags[tags[k]].generic) continue;
-      bump(ds, map, tags[k], [tags[k]], i, st.threshold);
-    }
+    for (const t of keptTags(ds, ds.games.tags[i], st)) bump(ds, map, t, [t], i, st.threshold);
   }
-  return [...map.values()].map((a) => finalize(ds, a, baseRate)).filter(keepRow(st));
+  const all = [...map.values()].map((a) => finalize(ds, a, baseRate));
+  const rows = all.filter(keepRow(st));
+  // What the thresholds swallowed, so the UI can say so instead of letting a tag vanish in silence
+  rows.hidden = { minN: all.filter((r) => r.n < st.minN).length, ease: all.filter((r) => r.n >= st.minN && st.minEase && r.ease < st.minEase).length };
+  return rows;
 }
 
 export function aggregatePairs(ds, idx, st, baseRate, mustContain = null) {
   const g = ds.games;
   const map = new Map();
   for (const i of idx) {
-    const tags = g.tags[i]
-      .slice(0, st.topN)
-      .filter((t) => !(st.hideGeneric && ds.tags[t].generic))
-      .sort((a, b) => a - b);
+    const tags = keptTags(ds, g.tags[i], st).sort((a, b) => a - b);
     if (mustContain != null && !tags.includes(mustContain)) continue;
     for (let a = 0; a < tags.length; a++) {
       for (let b = a + 1; b < tags.length; b++) {
@@ -201,7 +204,7 @@ export function byRollingYear(ds, idx, threshold) {
 }
 
 export function gamesWithTag(ds, idx, st, tagId) {
-  return idx.filter((i) => ds.games.tags[i].slice(0, st.topN).includes(tagId));
+  return idx.filter((i) => keptTags(ds, ds.games.tags[i], st).includes(tagId));
 }
 
 // Per calendar month over the selected period: releases and hits, for a subset of games

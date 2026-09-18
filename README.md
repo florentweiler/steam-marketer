@@ -11,6 +11,7 @@
 - Tag ranking by cautious success rate (95% Wilson lower bound), index vs average, median hit revenue, top-3 concentration
 - Success rate vs saturation scatter; per-tag drawer with year-over-year index, monthly releases and hits, biggest hits, best companion tags
 - Solo-dev ease: editorial 1–5 score per tag (`data/dev-ease.json`) plus the share of hits from self-published small studios
+- Tag classes (`data/tag-classes.json`): praise and meta tags are hidden by default, style tags stay visible and labelled, everything else is a genre
 - Two-tag combinations, searchable list of hits with Steam capsules, CSV export
 - Filters: release period (rolling years, calendar years, custom months), studio size, price band, Early Access, recency, threshold, tags per game, minimum solo ease
 - French / English, light / dark, shareable URLs (state lives in the hash)
@@ -34,7 +35,7 @@ Default window: last 3 years. Custom window: `node scripts/fetch-gamalytic.mjs -
 |---|---|---|
 | `fetch-gamalytic` | [Gamalytic](https://gamalytic.com) free public list | estimated copies sold, price, first release date, studio class |
 | `fetch-steam` | Steam `IStoreBrowseService/GetItems`, `IStoreService/GetTagList` | user tags + weights, reviews, capsule images, FR/EN tag names (refreshed every 30 days) |
-| `build-data` | — | keeps paid games, joins, writes a column-oriented dataset |
+| `build-data` | `data/tag-classes.json` | keeps paid games, joins, classifies tags, writes a column-oriented dataset |
 
 Estimated gross = estimated copies × current USD price (before discounts, regional pricing, VAT, refunds and Steam's cut). Sales are lifetime totals, so older periods look better than recent ones; the index (tag rate ÷ same-period average) stays comparable. See the Methodology tab for all limitations.
 

@@ -6,13 +6,15 @@ import { RAW, ROOT, SITE_DATA, readJson, writeJson } from './lib.mjs';
 const MAX_TAGS = 20;
 const STEAM_TYPE_GAME = 0;
 
-// Tags describing presentation or business model rather than what the game is; the site can hide them
-const GENERIC_TAGS = new Set([
-  'Indie', 'Singleplayer', 'Early Access', 'Great Soundtrack', 'Atmospheric', 'Beautiful', 'Addictive', 'Classic',
-  'Masterpiece', 'Controller', 'Family Friendly', 'Free to Play', 'Replay Value', 'Immersive', 'Cult Classic',
-  'Well-Written', 'Epic', 'Moddable', 'Steam Achievements', 'Steam Trading Cards', 'Remake', 'Remaster', 'Sequel',
-  'Soundtrack', 'Great Visuals', 'Good Story', 'Fun', 'Kickstarter', 'Crowdfunded', 'Software', 'Utilities',
-]);
+// Editorial tag classes live in data/tag-classes.json (praise / meta / style); everything else is a genre.
+// Only 'praise' and 'meta' are hidden by the site's "hide generic tags" box — see that file for the rule.
+// Fail loudly rather than quietly ship a dataset where nothing is classified: a missing file here
+// would leave every praise and meta tag visible, and nobody would notice for weeks.
+const tagClasses = await readJson(join(ROOT, 'data', 'tag-classes.json'), null);
+if (!tagClasses?.hiddenKinds) throw new Error('data/tag-classes.json missing or malformed');
+const HIDDEN_KINDS = new Set(tagClasses.hiddenKinds ?? []);
+const KIND = new Map();
+for (const kind of ['praise', 'meta', 'style']) for (const name of tagClasses[kind] ?? []) KIND.set(name, kind);
 
 const { from, to, fetchedAt, games } = await readJson(join(RAW, 'gamalytic.json'), {});
 const steam = await readJson(join(RAW, 'steam-items.json'), {});
@@ -35,10 +37,19 @@ for (const g of games) {
 const classes = [...new Set(rows.map((r) => r.cls))].sort();
 const usedTags = new Set(rows.flatMap((r) => r.tags));
 const tags = {};
+// Steam ships a couple of tag labels with a trailing space ('Parody ', 'Dystopian '), which silently
+// breaks every name-keyed lookup (classes, ease scores). Trim once, here.
 for (const id of usedTags) {
   const n = tagNames[id] ?? {};
-  tags[id] = { en: n.en ?? `#${id}`, fr: n.fr ?? n.en ?? `#${id}`, generic: GENERIC_TAGS.has(n.en) ? 1 : 0, ease: devEase[n.en] ?? null };
+  const en = (n.en ?? `#${id}`).trim();
+  const kind = KIND.get(en) ?? 'genre';
+  tags[id] = { en, fr: (n.fr ?? n.en ?? `#${id}`).trim(), kind, generic: HIDDEN_KINDS.has(kind) ? 1 : 0, ease: devEase[en] ?? null };
 }
+
+// A renamed or mistyped entry in tag-classes.json would silently stop matching: say so instead.
+const knownNames = new Set(Object.values(tagNames).map((n) => (n.en ?? '').trim()));
+const unknown = [...KIND.keys()].filter((name) => !knownNames.has(name));
+if (unknown.length) console.warn(`tag-classes.json: ${unknown.length} entr(y|ies) match no Steam tag:`, unknown.join(', '));
 
 // Column-oriented to keep the JSON small. Display-only fields (name, studio, image, reviews) are kept only for
 // games the site can list, i.e. above the lowest selectable success threshold.

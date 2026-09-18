@@ -10,7 +10,7 @@ set -euo pipefail
 APP_ROOT="/srv/steam-market"
 cd "$(dirname "$0")/.."
 
-paths=(package.json README.md scripts site/index.html site/style.css site/js site/fonts data/dev-ease.json)
+paths=(package.json README.md scripts site/index.html site/style.css site/js site/fonts data/dev-ease.json data/tag-classes.json)
 [[ "${1:-}" == "--with-raw" ]] && paths+=(data/raw)
 
 echo "==> Uploading ${paths[*]}"

@@ -101,6 +101,8 @@ export const STRINGS = {
     gamesSub: '{n} jeux correspondent aux filtres.',
     showMore: 'Afficher plus',
     noResult: 'Aucun résultat avec ces filtres.',
+    tagsHiddenMinN: '{n} tags ne sont pas affichés : moins de {min} sorties sur la période. Baisse « Sorties minimum » pour les voir.',
+    tagsHiddenEase: '{n} tags de plus sont écartés par le filtre de facilité solo.',
     // detail
     detailLabel: 'Détail du tag',
     detailReleases: 'Sorties par mois',
@@ -218,6 +220,8 @@ export const STRINGS = {
     gamesSub: '{n} games match the filters.',
     showMore: 'Show more',
     noResult: 'No results with these filters.',
+    tagsHiddenMinN: '{n} tags are not shown: fewer than {min} releases in this period. Lower “Minimum releases” to see them.',
+    tagsHiddenEase: '{n} more tags are held back by the solo-ease filter.',
     detailLabel: 'Tag details',
     detailReleases: 'Releases per month',
     detailHits: 'Hits per month',
@@ -252,7 +256,9 @@ export const METHOD = {
 <h3>Chiffre d’affaires</h3>
 <p><strong>CA brut estimé = copies vendues estimées × prix de base actuel en USD.</strong> C’est un chiffre <em>brut</em> : il ne retire ni les promotions, ni les prix régionaux, ni la TVA, ni les remboursements, ni la commission de Steam (30 %). En pratique, le développeur touche souvent entre 35 et 50 % de ce montant. Un jeu est un <strong>succès</strong> quand son CA brut dépasse le seuil choisi (100 000 $ par défaut).</p>
 <h3>Tags et saturation</h3>
-<p>Chaque jeu est rattaché à ses <em>N</em> tags les plus votés par les joueurs (10 par défaut). Pour chaque tag :</p>
+<p>Chaque jeu est rattaché à ses <em>N</em> tags les plus votés par les joueurs (10 par défaut). Steam n’en expose que 20 au maximum, quel que soit le jeu : c’est le plafond de son API, pas un choix de ce site. Un tag rarement bien classé est donc sous-représenté — 49 % des jeux atteignent ce plafond.</p>
+<p>Les tags qui ne décrivent pas un jeu qu’on pourrait décider de faire sont masqués par défaut (case « Masquer les tags génériques ») : les <strong>éloges</strong>, parce que n’importe quel jeu peut être « Atmospheric » ou « Beautiful », et le <strong>méta</strong> — logiciels non-jeux, artefacts de boutique (Early Access, Suite, Bande-son), supports matériels, et « Indé », déjà couvert par le filtre de taille de studio. Les tags de <strong>style</strong> (2D, 3D, Pixel Art, Anime…) restent affichés : ce sont de vrais choix de production. Le classement complet est dans <code>data/tag-classes.json</code>.</p>
+<p>Pour chaque tag :</p>
 <ul>
 <li><strong>Sorties</strong> : nombre de jeux avec le tag. C’est la mesure de saturation.</li>
 <li><strong>Taux de réussite</strong> : succès ÷ sorties.</li>
@@ -260,6 +266,7 @@ export const METHOD = {
 <li><strong>Indice</strong> : taux du tag ÷ taux global. Au-dessus de 1, le tag fait mieux que la moyenne.</li>
 <li><strong>Part top 3</strong> : si elle est proche de 100 %, le genre repose sur un ou deux hits plutôt que sur un marché sain.</li>
 </ul>
+<p>Un tag qui compte moins de sorties que le filtre « Sorties minimum » (20 par défaut) <em>n’apparaît pas du tout</em> dans le classement : sur une période courte, un genre bien réel peut ainsi être absent. Le nombre de tags écartés est indiqué sous le tableau ; baisse le seuil pour les voir.</p>
 <h3>Limites</h3>
 <ul>
 <li>Les ventes sont des <strong>estimations</strong> (souvent à ±30–50 % par jeu). Les tendances par tag, calculées sur des centaines de jeux, sont plus fiables que les chiffres d’un jeu isolé.</li>
@@ -289,7 +296,9 @@ export const METHOD = {
 <h3>Revenue</h3>
 <p><strong>Estimated gross = estimated copies sold × current base price in USD.</strong> This is <em>gross</em>: discounts, regional pricing, VAT, refunds and Steam’s 30% cut are not removed. In practice the developer often receives 35–50% of it. A game is a <strong>hit</strong> when its gross exceeds the chosen threshold ($100,000 by default).</p>
 <h3>Tags and saturation</h3>
-<p>Each game is attached to its <em>N</em> most-voted player tags (10 by default). For each tag:</p>
+<p>Each game is attached to its <em>N</em> most-voted player tags (10 by default). Steam exposes at most 20 tags per game whatever you ask for — its API ceiling, not a choice made here — so a tag that rarely ranks high is under-represented; 49% of games hit that ceiling.</p>
+<p>Tags that do not describe a game someone could decide to build are hidden by default (the “Hide generic tags” box): <strong>praise</strong>, because any game can be “Atmospheric” or “Beautiful”, and <strong>meta</strong> — non-game software, store artefacts (Early Access, Sequel, Soundtrack), hardware support, and “Indie”, already covered by the studio-size filter. <strong>Style</strong> tags (2D, 3D, Pixel Graphics, Anime…) stay visible: those are real production choices. The full classification lives in <code>data/tag-classes.json</code>.</p>
+<p>For each tag:</p>
 <ul>
 <li><strong>Releases</strong>: number of games with the tag. This measures saturation.</li>
 <li><strong>Success rate</strong>: hits ÷ releases.</li>
@@ -297,6 +306,7 @@ export const METHOD = {
 <li><strong>Index</strong>: tag rate ÷ overall rate. Above 1, the tag beats the average.</li>
 <li><strong>Top 3 share</strong>: near 100% means the genre rests on one or two hits rather than a healthy market.</li>
 </ul>
+<p>A tag with fewer releases than the “Minimum releases” filter (20 by default) <em>does not appear at all</em> in the ranking: over a short period a perfectly real genre can go missing this way. The number of tags held back is printed under the table; lower the threshold to see them.</p>
 <h3>Limitations</h3>
 <ul>
 <li>Sales are <strong>estimates</strong> (often ±30–50% per game). Tag-level trends over hundreds of games are more reliable than any single figure.</li>
