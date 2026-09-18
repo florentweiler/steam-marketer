@@ -101,6 +101,7 @@ export const STRINGS = {
     gamesSub: '{n} jeux correspondent aux filtres.',
     showMore: 'Afficher plus',
     noResult: 'Aucun résultat avec ces filtres.',
+    belowMinN: 'moins de {min} sorties',
     tagsHiddenMinN: '{n} tags ne sont pas affichés : moins de {min} sorties sur la période. Baisse « Sorties minimum » pour les voir.',
     tagsHiddenEase: '{n} tags de plus sont écartés par le filtre de facilité solo.',
     // detail
@@ -220,6 +221,7 @@ export const STRINGS = {
     gamesSub: '{n} games match the filters.',
     showMore: 'Show more',
     noResult: 'No results with these filters.',
+    belowMinN: 'fewer than {min} releases',
     tagsHiddenMinN: '{n} tags are not shown: fewer than {min} releases in this period. Lower “Minimum releases” to see them.',
     tagsHiddenEase: '{n} more tags are held back by the solo-ease filter.',
     detailLabel: 'Tag details',
@@ -266,7 +268,7 @@ export const METHOD = {
 <li><strong>Indice</strong> : taux du tag ÷ taux global. Au-dessus de 1, le tag fait mieux que la moyenne.</li>
 <li><strong>Part top 3</strong> : si elle est proche de 100 %, le genre repose sur un ou deux hits plutôt que sur un marché sain.</li>
 </ul>
-<p>Un tag qui compte moins de sorties que le filtre « Sorties minimum » (20 par défaut) <em>n’apparaît pas du tout</em> dans le classement : sur une période courte, un genre bien réel peut ainsi être absent. Le nombre de tags écartés est indiqué sous le tableau ; baisse le seuil pour les voir.</p>
+<p>Le filtre « Sorties minimum » (10 par défaut) retire du classement les tags trop rares pour qu’on en dise quoi que ce soit — la borne de Wilson les pénalise déjà, ce seuil ne fait qu’alléger le tableau. Le nombre de tags ainsi écartés est indiqué sous le tableau, et <strong>la recherche les trouve quand même</strong> : un tag sous le seuil s’affiche avec la mention « moins de N sorties ».</p>
 <h3>Limites</h3>
 <ul>
 <li>Les ventes sont des <strong>estimations</strong> (souvent à ±30–50 % par jeu). Les tendances par tag, calculées sur des centaines de jeux, sont plus fiables que les chiffres d’un jeu isolé.</li>
@@ -306,7 +308,7 @@ export const METHOD = {
 <li><strong>Index</strong>: tag rate ÷ overall rate. Above 1, the tag beats the average.</li>
 <li><strong>Top 3 share</strong>: near 100% means the genre rests on one or two hits rather than a healthy market.</li>
 </ul>
-<p>A tag with fewer releases than the “Minimum releases” filter (20 by default) <em>does not appear at all</em> in the ranking: over a short period a perfectly real genre can go missing this way. The number of tags held back is printed under the table; lower the threshold to see them.</p>
+<p>The “Minimum releases” filter (10 by default) keeps out tags too rare to say anything about — the Wilson bound already penalises them, so the threshold only declutters the table. The number of tags held back is printed under the table, and <strong>search finds them anyway</strong>: a tag below the bar shows up flagged “fewer than N releases”.</p>
 <h3>Limitations</h3>
 <ul>
 <li>Sales are <strong>estimates</strong> (often ±30–50% per game). Tag-level trends over hundreds of games are more reliable than any single figure.</li>

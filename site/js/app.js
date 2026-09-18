@@ -25,7 +25,7 @@ const DEFAULTS = {
   recent: 0,
   threshold: 100_000,
   topN: 10,
-  minN: 20,
+  minN: 10,
   minEase: 0,
   hideGeneric: true,
   tag: null,
@@ -121,6 +121,8 @@ function makeFmt(lang) {
 
 const tagName = (id) => ds.tags[id]?.[st.lang] ?? `#${id}`;
 const rowLabel = (r) => r.ids.map(tagName).join(' + ');
+// Also searchable by their English name, the one every Steam page and every guide uses
+const enLabel = (r) => r.ids.map((id) => ds.tags[id].en).join(' + ');
 
 function h(tag, props = {}, ...children) {
   const node = document.createElement(tag);
@@ -368,7 +370,10 @@ function searchBox(placeholder, onInput) {
   return input;
 }
 
-const matches = (q, ...fields) => !q || fields.some((f) => f?.toLowerCase().includes(q.toLowerCase()));
+// Search folds accents and punctuation: Steam writes the French Mahjong tag « Mah-jong », so typing
+// "mahjong" found nothing, and "objets caches" missed « Objets cachés ».
+const fold = (s) => (s ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/[^\p{L}\p{N}]+/gu, '').toLowerCase();
+const matches = (q, ...fields) => !q || fields.some((f) => fold(f).includes(fold(q)));
 
 // ---------- views ----------
 
@@ -433,16 +438,28 @@ function hiddenNote(hidden) {
 
 function renderTagsView(main, idx, sum) {
   const rows = aggregateTags(ds, idx, st, sum.rate);
+  // Everything the period holds, thresholds aside: what a search may reach and what the drawer can open
+  const searchable = st.q || st.tag != null ? aggregateTags(ds, idx, { ...st, minN: 1, minEase: 0 }, sum.rate) : rows;
   maxWilson = Math.max(0.0001, ...rows.map((r) => r.wilson));
-  const selected = rows.some((r) => r.key === st.tag) ? st.tag : null;
+  const selected = searchable.some((r) => r.key === st.tag) ? st.tag : null;
 
   const chartBox = h('div', { class: 'chart-box' });
   const detail = h('aside', { class: 'drawer', 'aria-live': 'polite', 'aria-label': t('detailLabel') });
   const scatterCard = card(t('scatterTitle'), t('scatterSub'), chartBox);
 
-  const cols = [{ key: 'colTag', sort: 'label', render: (r) => r.label }, ...statCols()];
-  const labeled = rows.map((r) => ({ ...r, label: rowLabel(r) }));
-  const visible = sortRows(labeled.filter((r) => matches(st.q, r.label)), st.sort, st.dir);
+  const cols = [
+    {
+      key: 'colTag',
+      sort: 'label',
+      render: (r) =>
+        r.below ? h('span', {}, r.label, h('span', { class: 'muted', text: ` · ${t('belowMinN', { min: st.minN })}` })) : r.label,
+    },
+    ...statCols(),
+  ];
+  // A search has to find a tag that exists. The "minimum releases" bar keeps the ranking readable; it must
+  // not make a real genre unfindable — searching « Tir et extraction » on a single year returned nothing.
+  const labeled = searchable.map((r) => ({ ...r, label: rowLabel(r), below: r.n < st.minN }));
+  const visible = sortRows(labeled.filter((r) => matches(st.q, r.label, enLabel(r))), st.sort, st.dir);
   const tableCard = card(
     t('tableTitle'),
     t('tableSub'),
@@ -464,7 +481,7 @@ function renderTagsView(main, idx, sum) {
     onSelect: (key) => update({ tag: key === st.tag ? null : key }),
     animate: entering,
   });
-  renderDetail(detail, idx, selected, rows, sum);
+  renderDetail(detail, idx, selected, searchable, sum);
 }
 
 function yearlyTable(yearly) {
@@ -607,7 +624,7 @@ function renderPairsView(main, idx, sum) {
   const topN = Math.min(st.topN, 10); // 45 pairs per game max keeps this instant
   const rows = aggregatePairs(ds, idx, { ...st, topN }, sum.rate, st.pairTag).map((r) => ({ ...r, label: rowLabel(r) }));
   maxWilson = Math.max(0.0001, ...rows.map((r) => r.wilson));
-  const visible = sortRows(rows.filter((r) => matches(st.q, r.label)), st.sort, st.dir).slice(0, 500);
+  const visible = sortRows(rows.filter((r) => matches(st.q, r.label, enLabel(r))), st.sort, st.dir).slice(0, 500);
   const cols = [{ key: 'colPair', sort: 'label', render: (r) => r.label }, ...statCols()];
 
   const tagOptions = aggregateTags(ds, idx, { ...st, minN: st.minN }, sum.rate)
