@@ -247,7 +247,7 @@ export const METHOD = {
   fr: `
 <h2>Méthodologie</h2>
 <h3>Périmètre</h3>
-<p>Tous les jeux dont la <strong>première sortie</strong> sur Steam (accès anticipé compris) tombe dans la période sélectionnée. Les données couvrent les 3 dernières années ; la dernière année est affichée par défaut. Les free-to-play, DLC, logiciels et jeux retirés de la boutique sont exclus. Un jeu sorti en accès anticipé avant la période puis passé en 1.0 pendant celle-ci n’est <em>pas</em> compté.</p>
+<p>Tous les jeux dont la <strong>première sortie</strong> sur Steam (accès anticipé compris) tombe dans la période sélectionnée. Les données couvrent les 3 dernières années ; la dernière année est affichée par défaut. Les free-to-play, DLC, logiciels et jeux retirés de la boutique sont exclus. Les jeux affichés à 150 $ ou plus le sont aussi : 182 des 187 concernés sont vendus exactement 199,99 $ par une poignée de studios qui clonent des jeux d’objets cachés, un prix destiné à gonfler les classements de revenus plutôt qu’à être payé. Un jeu sorti en accès anticipé avant la période puis passé en 1.0 pendant celle-ci n’est <em>pas</em> compté.</p>
 <h3>Sources</h3>
 <ul>
 <li><strong>Gamalytic</strong> (liste publique gratuite) : estimation des copies vendues, prix, date de sortie, taille du studio (Indé / AA / AAA).</li>
@@ -287,7 +287,7 @@ export const METHOD = {
   en: `
 <h2>Methodology</h2>
 <h3>Scope</h3>
-<p>Every game whose <strong>first release</strong> on Steam (Early Access included) falls inside the selected period. The data covers the last 3 years; the last year is shown by default. Free-to-play games, DLC, software and delisted games are excluded. A game that entered Early Access before the window and hit 1.0 during it is <em>not</em> counted.</p>
+<p>Every game whose <strong>first release</strong> on Steam (Early Access included) falls inside the selected period. The data covers the last 3 years; the last year is shown by default. Free-to-play games, DLC, software and delisted games are excluded. So are games listed at $150 or more: 182 of the 187 concerned sell for exactly $199.99, from a handful of studios cloning hidden-object games — a price meant to inflate revenue charts rather than to be paid. A game that entered Early Access before the window and hit 1.0 during it is <em>not</em> counted.</p>
 <h3>Sources</h3>
 <ul>
 <li><strong>Gamalytic</strong> (free public list): estimated copies sold, price, release date, studio size (Indie / AA / AAA).</li>

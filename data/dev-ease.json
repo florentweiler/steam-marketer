@@ -1,5 +1,5 @@
 {
-  "_scale": "Ease of development for a solo indie developer, 1 = very hard, 5 = very easy. Keys are Steam tag names in English. Themes and settings (Sci-fi, Cats, Medieval...) are deliberately unscored: they don't change the workload.",
+  "_scale": "Ease of development for a solo indie developer, 1 = very hard, 5 = very easy. Keys are Steam tag names in English (trimmed). Themes and settings (Sci-fi, Cats, Medieval...) are deliberately unscored: they don't change the workload. Tags hidden by data/tag-classes.json are not scored either — their score would never be read.",
   "_criteria": [
     "Art & asset volume (2D minimal < pixel art < hand-drawn/3D stylized < realistic 3D)",
     "Technical risk (netcode, physics, large worlds, AI, procedural systems)",
@@ -160,7 +160,6 @@
     "Solitaire": 5,
     "Mystery Dungeon": 3,
     "Looter Shooter": 1,
-    "Desktop Companion": 4,
     "Level Editor": 2,
     "Sokoban": 5,
     "Trading": 3,
@@ -224,7 +223,6 @@
     "Mahjong": 5,
     "Naval Combat": 2,
     "Extraction Shooter": 1,
-    "Mouse Only": 5,
     "Boxing": 2,
     "Farming": 3,
     "6DOF": 2,
@@ -259,6 +257,19 @@
     "Football (American)": 1,
     "Baseball": 2,
     "Hockey": 2,
-    "Billiards": 3
+    "Billiards": 3,
+    "Cartoony": 4,
+    "Cartoon": 4,
+    "Comic Book": 4,
+    "Anime": 3,
+    "Story Rich": 3,
+    "Lore-Rich": 3,
+    "Combat": 3,
+    "Perma Death": 4,
+    "Outbreak Sim": 2,
+    "Hobby Sim": 3,
+    "Zoo": 3,
+    "Lemmings": 4,
+    "Musou": 1
   }
 }

@@ -35,7 +35,7 @@ Default window: last 3 years. Custom window: `node scripts/fetch-gamalytic.mjs -
 |---|---|---|
 | `fetch-gamalytic` | [Gamalytic](https://gamalytic.com) free public list | estimated copies sold, price, first release date, studio class |
 | `fetch-steam` | Steam `IStoreBrowseService/GetItems`, `IStoreService/GetTagList` | user tags + weights, reviews, capsule images, FR/EN tag names (refreshed every 30 days) |
-| `build-data` | `data/tag-classes.json` | keeps paid games, joins, classifies tags, writes a column-oriented dataset |
+| `build-data` | `data/tag-classes.json`, `data/dev-ease.json` | keeps paid games under $150 (above that is $199.99 shovelware), joins, classifies tags, writes a column-oriented dataset |
 
 Estimated gross = estimated copies × current USD price (before discounts, regional pricing, VAT, refunds and Steam's cut). Sales are lifetime totals, so older periods look better than recent ones; the index (tag rate ÷ same-period average) stays comparable. See the Methodology tab for all limitations.
 

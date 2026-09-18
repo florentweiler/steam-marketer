@@ -5,6 +5,11 @@ import { RAW, ROOT, SITE_DATA, readJson, writeJson } from './lib.mjs';
 
 const MAX_TAGS = 20;
 const STEAM_TYPE_GAME = 0;
+// Steam carries clusters of cloned hidden-object/puzzle games priced at exactly $199.99 by a handful of
+// studios (Hede, PUZZLE Games, Rawi Studio...). Nobody pays that; the price exists to game revenue charts.
+// 182 of the 187 games at or above this line share that single price, and none of them is a real product,
+// while between $100 and $150 there are four games and no hit at all: the gap is where the cut belongs.
+const MAX_CREDIBLE_PRICE = 150;
 
 // Editorial tag classes live in data/tag-classes.json (praise / meta / style); everything else is a genre.
 // Only 'praise' and 'meta' are hidden by the site's "hide generic tags" box — see that file for the rule.
@@ -24,9 +29,10 @@ if (!games) throw new Error('Run the fetch scripts first');
 
 const DAY = 86400e3;
 const rows = [];
-let dropped = { free: 0, noSteam: 0, notGame: 0 };
+let dropped = { free: 0, absurdPrice: 0, noSteam: 0, notGame: 0 };
 for (const g of games) {
   if (!(g.price > 0)) { dropped.free++; continue; }
+  if (g.price >= MAX_CREDIBLE_PRICE) { dropped.absurdPrice++; continue; }
   const s = steam[g.appid];
   if (!s?.ok) { dropped.noSteam++; continue; }
   if (s.type !== STEAM_TYPE_GAME) { dropped.notGame++; continue; }
@@ -48,8 +54,14 @@ for (const id of usedTags) {
 
 // A renamed or mistyped entry in tag-classes.json would silently stop matching: say so instead.
 const knownNames = new Set(Object.values(tagNames).map((n) => (n.en ?? '').trim()));
-const unknown = [...KIND.keys()].filter((name) => !knownNames.has(name));
-if (unknown.length) console.warn(`tag-classes.json: ${unknown.length} entr(y|ies) match no Steam tag:`, unknown.join(', '));
+const orphans = (names, file) => {
+  const bad = names.filter((name) => !knownNames.has(name));
+  if (bad.length) console.warn(`${file}: ${bad.length} entries match no Steam tag:`, bad.join(', '));
+};
+orphans([...KIND.keys()], 'tag-classes.json');
+orphans(Object.keys(devEase), 'dev-ease.json');
+const scoredButHidden = Object.keys(devEase).filter((name) => HIDDEN_KINDS.has(KIND.get(name)));
+if (scoredButHidden.length) console.warn('dev-ease.json: scores on hidden tags, never read:', scoredButHidden.join(', '));
 
 // Column-oriented to keep the JSON small. Display-only fields (name, studio, image, reviews) are kept only for
 // games the site can list, i.e. above the lowest selectable success threshold.
