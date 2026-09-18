@@ -42,5 +42,5 @@ Sales figures are third-party **estimates**, not official data. Not affiliated w
 
 ## Deployment
 
-Self-hosted on a small VPS behind Caddy, with the data refreshed weekly by a systemd timer. See [`deploy/README.md`](deploy/README.md).
+Self-hosted on a small VPS behind Caddy, with the data refreshed daily by a systemd timer. See [`deploy/README.md`](deploy/README.md).
 The `site/` folder is fully static, so any static host works too once `site/data/dataset.json` is built.

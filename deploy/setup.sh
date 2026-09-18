@@ -24,7 +24,7 @@ install -d -m 755 -o "$APP_USER" -g "$APP_USER" "$APP_ROOT" "$APP_ROOT/site" "$A
 echo "==> Caddy site ($CADDY_SITE)"
 install -d -m 755 /etc/caddy/sites
 cat > "$CADDY_SITE" <<CADDY
-# Steam Genre Market — static site, data refreshed weekly by steam-market-update.timer
+# Steam Genre Market — static site, data refreshed daily by steam-market-update.timer
 www.$DOMAIN {
 	redir https://$DOMAIN{uri} permanent
 }
@@ -58,7 +58,7 @@ CADDY
 # If another script regenerates /etc/caddy/Caddyfile from scratch, make sure it keeps this import line too
 grep -qxF 'import sites/*.caddy' /etc/caddy/Caddyfile || printf '\nimport sites/*.caddy\n' >> /etc/caddy/Caddyfile
 
-echo "==> Weekly data refresh (systemd)"
+echo "==> Daily data refresh (systemd)"
 cat > /etc/systemd/system/steam-market-update.service <<UNIT
 [Unit]
 Description=Steam Genre Market: refetch Gamalytic + Steam data and rebuild the dataset
@@ -74,6 +74,9 @@ ExecStart=/usr/bin/node scripts/fetch-gamalytic.mjs
 ExecStart=/usr/bin/node scripts/fetch-steam.mjs
 ExecStart=/usr/bin/node scripts/build-data.mjs
 Nice=10
+# Type=oneshot has no start timeout by default: cap it so a hung fetch cannot
+# sit there until the next day's run.
+TimeoutStartSec=45min
 NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectHome=yes
@@ -83,10 +86,10 @@ UNIT
 
 cat > /etc/systemd/system/steam-market-update.timer <<UNIT
 [Unit]
-Description=Weekly Steam Genre Market data refresh
+Description=Daily Steam Genre Market data refresh
 
 [Timer]
-OnCalendar=Mon *-*-* 03:30:00
+OnCalendar=*-*-* 03:30:00
 RandomizedDelaySec=30min
 Persistent=true
 

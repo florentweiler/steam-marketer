@@ -18,7 +18,7 @@ its own Caddy snippet and its own log, so it can live next to other sites alread
 ## Updates
 
 - Code or site changes: `SERVER=root@my-server deploy/deploy.sh`
-- Data: refreshed automatically every Monday ~03:30 UTC by `steam-market-update.timer`.
+- Data: refreshed automatically every day ~03:30 UTC (+ up to 30 min of jitter) by `steam-market-update.timer`.
   Run now: `systemctl start steam-market-update` — logs: `journalctl -u steam-market-update`
 
 ## Caveat
