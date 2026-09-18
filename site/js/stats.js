@@ -82,6 +82,12 @@ export function filterGames(ds, st, range = periodRange(ds, st)) {
   return out;
 }
 
+// Search folds accents and punctuation: Steam writes the French Mahjong tag « Mah-jong », so typing
+// "mahjong" found nothing, and "objets caches" missed « Objets cachés ». Lives here so scripts/check.mjs
+// exercises the very function the site uses.
+export const fold = (s) => (s ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/[^\p{L}\p{N}]+/gu, '').toLowerCase();
+export const matches = (q, ...fields) => !q || fields.some((f) => fold(f).includes(fold(q)));
+
 export function wilsonLow(hits, n, z = 1.96) {
   if (!n) return 0;
   const p = hits / n;

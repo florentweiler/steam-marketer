@@ -1,8 +1,8 @@
 import { METHOD, makeT } from './i18n.js';
 import { columns, hideTooltip, scatter } from './charts.js';
 import {
-  PRICE_BANDS, aggregatePairs, aggregateTags, byRollingYear, filterGames, gamesWithTag, keptTags, monthKeyOf, monthly,
-  periodPresets, periodRange, prepare, summary,
+  PRICE_BANDS, aggregatePairs, aggregateTags, byRollingYear, filterGames, gamesWithTag, keptTags, matches, monthKeyOf,
+  monthly, periodPresets, periodRange, prepare, summary,
 } from './stats.js';
 
 const CAPSULE_BASE = 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/';
@@ -370,10 +370,7 @@ function searchBox(placeholder, onInput) {
   return input;
 }
 
-// Search folds accents and punctuation: Steam writes the French Mahjong tag « Mah-jong », so typing
-// "mahjong" found nothing, and "objets caches" missed « Objets cachés ».
-const fold = (s) => (s ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/[^\p{L}\p{N}]+/gu, '').toLowerCase();
-const matches = (q, ...fields) => !q || fields.some((f) => fold(f).includes(fold(q)));
+
 
 // ---------- views ----------
 

@@ -8,7 +8,8 @@
     "fetch:gamalytic": "node scripts/fetch-gamalytic.mjs",
     "fetch:steam": "node scripts/fetch-steam.mjs",
     "build": "node scripts/build-data.mjs",
-    "update": "node scripts/fetch-gamalytic.mjs && node scripts/fetch-steam.mjs && node scripts/build-data.mjs",
+    "check": "node scripts/check.mjs",
+    "update": "node scripts/fetch-gamalytic.mjs && node scripts/fetch-steam.mjs && node scripts/build-data.mjs && node scripts/check.mjs",
     "serve": "node scripts/serve.mjs"
   },
   "engines": {

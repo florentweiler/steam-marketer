@@ -22,7 +22,9 @@
 Requires Node.js ≥ 20.
 
 ```sh
-npm run update   # fetch Gamalytic + Steam data (~15 min), build site/data/dataset.json
+npm run update   # fetch Gamalytic + Steam data (~15 min), build site/data/dataset.json, then check it
+npm run check    # audit the built dataset on its own: integrity, tag table, per-tag counts on every
+                 # period (recomputed independently), searchability, indicator coherence
 npm run serve    # http://localhost:5173
 ```
 

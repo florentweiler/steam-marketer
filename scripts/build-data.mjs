@@ -52,6 +52,14 @@ for (const id of usedTags) {
   tags[id] = { en, fr: (n.fr ?? n.en ?? `#${id}`).trim(), kind, generic: HIDDEN_KINDS.has(kind) ? 1 : 0, ease: devEase[en] ?? null };
 }
 
+// Two Steam tags can share one translation: 'Fighting' and 'Combat' are both « Combat » in French,
+// which puts two indistinguishable rows in the table. Disambiguate with the English name.
+for (const lang of ['fr', 'en']) {
+  const byLabel = new Map();
+  for (const t of Object.values(tags)) (byLabel.get(t[lang]) ?? byLabel.set(t[lang], []).get(t[lang])).push(t);
+  for (const [, group] of byLabel) if (group.length > 1) for (const t of group) if (t[lang] !== t.en) t[lang] = `${t[lang]} (${t.en})`;
+}
+
 // A renamed or mistyped entry in tag-classes.json would silently stop matching: say so instead.
 const knownNames = new Set(Object.values(tagNames).map((n) => (n.en ?? '').trim()));
 const orphans = (names, file) => {

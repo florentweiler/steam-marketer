@@ -73,6 +73,9 @@ WorkingDirectory=$APP_ROOT
 ExecStart=/usr/bin/node scripts/fetch-gamalytic.mjs
 ExecStart=/usr/bin/node scripts/fetch-steam.mjs
 ExecStart=/usr/bin/node scripts/build-data.mjs
+# Contrôle du résultat : une dérive (libellés en double, prix hors bornes, tag introuvable par la
+# recherche) fait échouer l'unité et se voit dans `systemctl status` au lieu de passer inaperçue.
+ExecStart=/usr/bin/node scripts/check.mjs
 Nice=10
 # Type=oneshot has no start timeout by default: cap it so a hung fetch cannot
 # sit there until the next day's run.
